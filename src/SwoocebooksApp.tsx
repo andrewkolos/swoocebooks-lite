@@ -50,16 +50,19 @@ export class SwoocebooksApp extends React.Component<{}, SwoocebooksState> {
                 <nav className="navbar navbar-dark bg-primary">
                     <span className="navbar-brand mr-auto ml-auto">Swoocebooks Lite</span>
                 </nav>
-                <p className="instructions"><strong>Instructions:</strong> type in your grades below, use the tab key to quickly
+                <p className="instructions"><strong>Instructions:</strong> type in your grades below, use the tab key to
+                    quickly
                     move between columns.</p>
 
-                <div className="heads-up">
-                    <p>
-                        &nbsp; {/*blank spaces are a cheap way to "reserve" space in the page if weights do add up to 100*/}
-                    {this.state.assignments.reduce((a,c) => a + c.weight, 0) !== 100 && 'Weights do not add up to 100%'}
-                        &nbsp; {/*another one here to preserve centering*/}
-                    </p>
-                    <p>Current grade: {this.calculateGrade().toFixed(2)}</p>
+                <div className="heads-up-wrapper">
+                    <div className="heads-up">
+                        <p>
+                            &nbsp; {/*blank spaces are a cheap way to "reserve" space in the page if weights do add up to 100*/}
+                            {this.state.assignments.reduce((a, c) => a + c.weight, 0) !== 100 && 'Weights do not add up to 100%'}
+                            &nbsp; {/*another one here to preserve centering*/}
+                        </p>
+                        <p>Current grade: {this.calculateGrade().toFixed(2)}</p>
+                    </div>
                 </div>
 
                 <div className="float-right clearButton">

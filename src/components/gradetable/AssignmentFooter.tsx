@@ -25,6 +25,7 @@ export class AssignmentFooter extends React.Component<props> {
 
     handleChange() {
         setTimeout(() => {
+
             if ((document.activeElement !== this.nameInput && document.activeElement !== this.earnedInput &&
                     document.activeElement !== this.weightInput) || this.forceSave) {
 
@@ -32,8 +33,8 @@ export class AssignmentFooter extends React.Component<props> {
                     this.props.onAdd({
                         id: this.createId(),
                         name: (this.nameInput.value ? this.nameInput.value : 'Untitled'),
-                        earned: +this.earnedInput.value,
-                        weight: +this.weightInput.value
+                        earned: (isFinite(+this.earnedInput.value) ? +this.earnedInput.value : 0),
+                        weight: (isFinite(+this.weightInput.value) ? +this.weightInput.value : 0)
                     });
 
                 this.nameInput.value = '';
