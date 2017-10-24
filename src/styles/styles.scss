@@ -1,0 +1,31 @@
+@import './base/base';
+@import 'react-components/assignmentrow';
+
+
+.main-content {
+  max-width: 1000px;
+  overflow: hidden;
+}
+
+.heads-up {
+
+  text-align: center;
+
+  p:not(:last-child) {
+    margin-bottom: 0;
+  }
+}
+
+.hr-dark {
+  border-top: 1px solid rgba(0,0,0, 0.3);
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.instructions {
+  margin-top: 1.5rem;
+}
+
+.clearButton {
+  margin-bottom: 0.2rem;
+}

@@ -50,10 +50,10 @@ export class SwoocebooksApp extends React.Component<{}, SwoocebooksState> {
                 <nav className="navbar navbar-dark bg-primary">
                     <span className="navbar-brand mr-auto ml-auto">Swoocebooks Lite</span>
                 </nav>
-                <p><strong>Instructions:</strong> type in your grades below, use the tab key to quickly
+                <p className="instructions"><strong>Instructions:</strong> type in your grades below, use the tab key to quickly
                     move between columns.</p>
 
-                <div>
+                <div className="heads-up">
                     <p>
                         &nbsp; {/*blank spaces are a cheap way to "reserve" space in the page if weights do add up to 100*/}
                     {this.state.assignments.reduce((a,c) => a + c.weight, 0) !== 100 && 'Weights do not add up to 100%'}
@@ -62,7 +62,7 @@ export class SwoocebooksApp extends React.Component<{}, SwoocebooksState> {
                     <p>Current grade: {this.calculateGrade().toFixed(2)}</p>
                 </div>
 
-                <div className="float-right">
+                <div className="float-right clearButton">
                     <button className="btn btn-primary"
                             onClick={this.handleClearTable}
                     >
@@ -72,7 +72,7 @@ export class SwoocebooksApp extends React.Component<{}, SwoocebooksState> {
 
                 <AssignmentTable assignments={this.state.assignments} onChange={this.handleChange}/>
 
-                <hr className="black"/>
+                <hr className="hr-dark"/>
 
                 <RemainingTable assignments={this.state.assignments}/>
 

@@ -1,5 +1,4 @@
 import React = require('react');
-import ReactDOM = require('react-dom');
 import {Assignment} from "../../model/assignment";
 
 
@@ -17,7 +16,7 @@ export class AssignmentRow extends React.Component<props, Assignment> {
 
     render() {
         return (
-            <tr>
+            <tr className="assignment-row">
                 <td>
                     <input type="text"
                            className="form-control"
