@@ -14,7 +14,7 @@ export default class SwoocebooksApp extends React.Component<{}, SwoocebooksState
         };
     }
 
-    componentDidMount() {
+    componentWillMount() {
         try {
             const json = localStorage.getItem('assignments');
             const assignments = JSON.parse(json);
@@ -31,6 +31,16 @@ export default class SwoocebooksApp extends React.Component<{}, SwoocebooksState
         localStorage.setItem('assignments', json);
     }
 
+    calculateGrade = () => {
+        console.log('calculating grade');
+        return this.state.assignments.reduce((acc, current) =>
+            acc + (current.earned / 100 * current.weight), 0.0);
+    };
+
+    handleChange = (updated: Assignment[]) => {
+        this.setState({assignments: updated});
+    };
+
     render() {
         return (
             <div className="container main-content">
@@ -41,54 +51,43 @@ export default class SwoocebooksApp extends React.Component<{}, SwoocebooksState
                     move between columns.</p>
 
                 <div>
-                    <p>Weights do not add up to 100%</p>
-                    <p>Current grade: 0.00%</p>
+                    <p>
+                        &nbsp; {/*blank spaces are a cheap way to "reserve" space in the page if weights do add up to 100*/}
+                    {this.state.assignments.reduce((a,c) => a + c.weight, 0) !== 100 && 'Weights do not add up to 100%'}
+                        &nbsp; {/*another one here to preserve centering*/}
+                    </p>
+                    <p>Current grade: {this.calculateGrade().toFixed(2)}</p>
                 </div>
 
                 <div className="float-right">
-                    <button className="btn btn-primary">Clear Table</button>
+                    <button className="btn btn-primary"
+                            onClick={this.handleClearTable}
+                    >
+                        Clear Table
+                    </button>
                 </div>
 
-                <AssignmentTable assignments={this.state.assignments}/>
+                <AssignmentTable assignments={this.state.assignments} onChange={this.handleChange}/>
 
                 <hr className="black"/>
-                <p>This shows how you would need to score on the remaining assignments to achieve each letter grade.</p>
-                <table className="table">
-                    <thead>
-                    <tr className="">
-                        <th scope="col">Grade</th>
-                        <th scope="col">A</th>
-                        <th scope="col">B</th>
-                        <th scope="col">C</th>
-                        <th scope="col">D</th>
-                        <th scope="col">F</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Assignment 1</td>
-                        <td>40.32</td>
-                        <td>25%</td>
-                        <td>joj now want%</td>
-                        <td>27.32%</td>
-                        <td>27.32%</td>
-                    </tr>
-                    </tbody>
-                </table>
+
+                <RemainingTable assignments={this.state.assignments}/>
 
             </div>
         );
     }
 
-    handleAddAssignment(assignment: Assignment) {
-        this.setState((previousState: SwoocebooksState) => {
-            this.state.assignments.push(assignment);
-        })
-    }
+    handleAddAssignment = (assignment: Assignment) => {
+        this.setState((previousState: SwoocebooksState) => ({
+            assignments: this.state.assignments.concat(assignment)
+        }));
+    };
 
-    handleClearTable() {
-        this.setState(() => ({assignments: []}))
-    }
+    handleClearTable = (e: React.MouseEvent<HTMLButtonElement>) => {
+        this.setState(() => ({
+            assignments: []
+        }));
+    };
 
 }
 
@@ -145,7 +144,7 @@ export class AssignmentTable extends React.Component<AssignmentTableProps, Assig
                 </thead>
                 <tbody>
                 {
-                    this.state.assignments.map((assignment: Assignment) => (
+                    this.props.assignments.map((assignment: Assignment) => (
                         <AssignmentRow key={assignment.id} assignment={assignment}
                                        onChange={this.handleUpdateAssignment}/>
                     ))
@@ -157,6 +156,52 @@ export class AssignmentTable extends React.Component<AssignmentTableProps, Assig
     };
 }
 
+interface RemainingTableProps {
+    assignments: Assignment[];
+}
+
+export const RemainingTable: React.StatelessComponent<RemainingTableProps> = (props: RemainingTableProps) => {
+        return (
+            <div>
+                <p>This shows how you would need to score on the remaining assignments to achieve each letter grade.</p>
+                <table className="table">
+                    <thead>
+                    <tr className="">
+                        <th scope="col">Grade</th>
+                        <th scope="col">A</th>
+                        <th scope="col">B</th>
+                        <th scope="col">C</th>
+                        <th scope="col">D</th>
+                        <th scope="col">F</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th>Remaining</th>
+                        <td>{neededGradeString(props.assignments, 90)}</td>
+                        <td>{neededGradeString(props.assignments, 80)}</td>
+                        <td>{neededGradeString(props.assignments, 70)}</td>
+                        <td>{neededGradeString(props.assignments, 60)}</td>
+                        <td>{neededGradeString(props.assignments, 50)}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        );
+};
+
+function neededGradeString(assignments: Assignment[], desired: number) {
+    let grade = assignments.reduce((acc: number, current: Assignment) =>
+        acc + (current.earned / 100  * current.weight), 0.0);
+    let worthRemaining = 100 - assignments.reduce((acc: number, current: Assignment) =>
+        acc + current.weight, 0.0);
+    let worthNeeded = desired - grade;
+    let res = (worthNeeded / worthRemaining * 100);
+    if (Math.abs(res) === Infinity)
+        return '--';
+    return res.toFixed(2);
+
+}
 
 interface AssignmentRowProps {
     assignment: Assignment;
@@ -194,7 +239,7 @@ class AssignmentRow extends React.Component<AssignmentRowProps, Assignment> {
                            onChange={event => this.setState({weight: +event.target.value})}
                     />
                 </td>
-                <td>{this.state.earned / 100 * this.state.weight}</td>
+                <td>{(this.state.earned / 100 * this.state.weight).toFixed(2)}</td>
             </tr>
         );
     }
@@ -224,7 +269,6 @@ export class AssignmentFooter extends React.Component<AssignmentFooterProps> {
 
     handleChange() {
         setTimeout(() => {
-            console.log('handling change');
             if ((document.activeElement !== this.nameInput && document.activeElement !== this.earnedInput &&
                     document.activeElement !== this.weightInput) || this.forceSave) {
 
@@ -239,16 +283,17 @@ export class AssignmentFooter extends React.Component<AssignmentFooterProps> {
                 this.nameInput.value = '';
                 this.earnedInput.value = '';
                 this.weightInput.value = '';
+
+                this.forceSave = false;
             }
         }, 0) // wait for next tick to allow focus to change
     };
 
     handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.keyCode === 9) { //tab
-            setTimeout(() => {
-                this.forceSave = true;
-                this.nameInput.focus();
-            }, 0)
+            e.preventDefault();
+            this.forceSave = true;
+            this.nameInput.focus();
         }
     };
 
