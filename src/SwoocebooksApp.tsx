@@ -30,12 +30,12 @@ export class SwoocebooksApp extends React.Component<{}, SwoocebooksState> {
     }
 
     componentDidUpdate(prevState: SwoocebooksState) {
+        console.log('updated');
         const json = JSON.stringify(this.state.assignments);
         localStorage.setItem('assignments', json);
     }
 
     calculateGrade = () => {
-        console.log('calculating grade');
         return this.state.assignments.reduce((acc, current) =>
             acc + (current.earned / 100 * current.weight), 0.0);
     };
@@ -45,6 +45,7 @@ export class SwoocebooksApp extends React.Component<{}, SwoocebooksState> {
     };
 
     render() {
+        console.log(this.state.assignments);
         return (
             <div className="container main-content">
                 <nav className="navbar navbar-dark bg-primary">

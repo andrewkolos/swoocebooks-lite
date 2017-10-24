@@ -2,48 +2,31 @@ import React = require('react');
 import {Assignment} from "../../model/assignment";
 import {AssignmentFooter} from "./AssignmentFooter";
 import {AssignmentRow} from "./AssignmentRow";
+import {StatelessComponent} from "react";
 
 export interface props {
     assignments: Assignment[];
     onChange?: (assignments: Assignment[]) => void;
 }
 
-export interface state {
-    assignments: Assignment[];
-}
 
-export class AssignmentTable extends React.Component<props, state> {
-    constructor(props: props) {
-        super();
-        this.state = {assignments: props.assignments};
-        this.handleAddAssignment = this.handleAddAssignment.bind(this);
-        this.handleRemoveAssignment = this.handleRemoveAssignment.bind(this);
-        this.handleUpdateAssignment = this.handleUpdateAssignment.bind(this);
-    }
+export const AssignmentTable: React.StatelessComponent<props> = (props: props) => {
 
-    handleAddAssignment(assignment: Assignment) {
-        this.setState((previousState: state) => ({
-            assignments: previousState.assignments.concat(assignment)
-        }));
-        if (this.props.onChange)
-            this.props.onChange(this.state.assignments);
-    }
+    let handleAddAssignment = (assignment: Assignment) => {
 
-    handleRemoveAssignment(removedAssignment: Assignment) {
-        this.setState((previousState: state) => ({
-            assignments: previousState.assignments.filter(assignment => assignment !== removedAssignment)
-        }));
-        this.props.onChange(this.state.assignments);
-    }
+        if (props.onChange)
+            props.onChange(props.assignments.concat(assignment));
+    };
 
-    handleUpdateAssignment(oldAssignment: Assignment, newAssignment: Assignment) {
-        this.setState(prevState => ({
-            assignments: prevState.assignments.map(assignment => assignment === oldAssignment ? newAssignment : assignment)
-        }));
-        this.props.onChange(this.state.assignments);
-    }
+    let handleRemoveAssignment = (removedAssignment: Assignment) => {
 
-    render() {
+        props.onChange(props.assignments.filter(assignment => assignment !== removedAssignment));
+    };
+
+    let handleUpdateAssignment = (oldAssignment: Assignment, newAssignment: Assignment) => {
+        props.onChange(props.assignments.map(assignment => assignment === oldAssignment ? newAssignment : assignment));
+    };
+
         return (
             <table className="table table-striped">
                 <thead>
@@ -56,14 +39,13 @@ export class AssignmentTable extends React.Component<props, state> {
                 </thead>
                 <tbody>
                 {
-                    this.props.assignments.map((assignment: Assignment) => (
+                    props.assignments.map((assignment: Assignment) => (
                         <AssignmentRow key={assignment.id} assignment={assignment}
-                                       onChange={this.handleUpdateAssignment}/>
+                                       onChange={handleUpdateAssignment}/>
                     ))
                 }
-                <AssignmentFooter onAdd={this.handleAddAssignment}/>
+                <AssignmentFooter onAdd={handleAddAssignment}/>
                 </tbody>
             </table>
         )
-    };
-}
+};
