@@ -38,11 +38,12 @@ export const RemainingTable: React.StatelessComponent<props> = (props: props) =>
 function neededGradeString(assignments: Assignment[], desired: number) {
     let grade = assignments.reduce((acc: number, current: Assignment) =>
         acc + (current.earned / 100  * current.weight), 0.0);
-    let worthRemaining = 100 - assignments.reduce((acc: number, current: Assignment) =>
+    let totalWeight = assignments.reduce((acc: number, current: Assignment) =>
         acc + current.weight, 0.0);
-    let worthNeeded = desired - grade;
-    let res = (worthNeeded / worthRemaining * 100);
-    if (Math.abs(res) === Infinity)
+    let weightRemaining = 100 - totalWeight;
+    let weightNeeded = desired - grade;
+    let res = (weightNeeded / weightRemaining * 100);
+    if (Math.abs(res) === Infinity || Math.abs(weightRemaining+100) < 0.01 || totalWeight > 100)
         return '--';
     return res.toFixed(2);
 

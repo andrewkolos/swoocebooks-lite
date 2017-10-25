@@ -30,7 +30,6 @@ export class SwoocebooksApp extends React.Component<{}, SwoocebooksState> {
     }
 
     componentDidUpdate(prevState: SwoocebooksState) {
-        console.log('updated');
         const json = JSON.stringify(this.state.assignments);
         localStorage.setItem('assignments', json);
     }

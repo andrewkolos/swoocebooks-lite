@@ -23,8 +23,8 @@ export const AssignmentTable: React.StatelessComponent<props> = (props: props) =
         props.onChange(props.assignments.filter(assignment => assignment !== removedAssignment));
     };
 
-    let handleUpdateAssignment = (oldAssignment: Assignment, newAssignment: Assignment) => {
-        props.onChange(props.assignments.map(assignment => assignment === oldAssignment ? newAssignment : assignment));
+    let handleUpdateAssignment = (newAssignment: Assignment) => {
+        props.onChange(props.assignments.map(assignment => assignment.id === newAssignment.id ? newAssignment : assignment));
     };
 
         return (
