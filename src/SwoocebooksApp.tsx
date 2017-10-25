@@ -58,7 +58,7 @@ export class SwoocebooksApp extends React.Component<{}, SwoocebooksState> {
                     <div className="heads-up">
                         <p>
                             &nbsp; {/*blank spaces are a cheap way to "reserve" space in the page if weights do add up to 100*/}
-                            {this.state.assignments.reduce((a, c) => a + c.weight, 0) !== 100 && 'Weights do not add up to 100%'}
+                            {Math.abs(this.state.assignments.reduce((a, c) => a + c.weight, 0) - 100) > 0.01 && 'Weights do not add up to 100%'}
                             &nbsp; {/*another one here to preserve centering*/}
                         </p>
                         <p>Current grade: {this.calculateGrade().toFixed(2)}</p>
