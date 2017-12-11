@@ -1,5 +1,6 @@
 import React = require('react');
 import {Assignment} from "../../model/assignment";
+import {evalMathExpression} from "../util";
 
 
 export interface props {
@@ -16,6 +17,9 @@ interface state {
 }
 
 export class AssignmentRow extends React.Component<props, state> {
+    private gradeInput: HTMLInputElement;
+    private weightInput: HTMLInputElement;
+
     constructor(props: props) {
         super();
         this.state  = {
@@ -47,17 +51,26 @@ export class AssignmentRow extends React.Component<props, state> {
                     <input type="text"
                            className="form-control"
                            value={this.state.earnedString}
+                           ref={input => this.gradeInput = input}
                            onChange={event => {
                                let val = event.target.value;
                                this.setState({earnedString: val});
-                               let num = zeroIfNotFinite(val);
-                               if (num == 0) { // invalid value
-                                   this.setState({earnedString: '0'});
-                               }
-                               if (num !== this.state.earnedValue) {
-                                   this.setState({earnedValue: num});
+                           }}
+                           onBlur={event => {
+                               let val = (event as any).target.value;
+
+                               let num = evalMathExpression(val);
+                               console.log(num);
+
+                               if (isFinite(num) && num !== this.state.earnedValue && document.activeElement !== this.gradeInput) {
+                                   this.setState({earnedValue: num, earnedString: String(num)});
                                    this.props.onChange(this.props.assignment);
-                                   this.props.onChange({id: this.props.assignment.id, name: this.state.name, earned: num, weight: this.state.weightValue});
+                                   this.props.onChange({
+                                       id: this.props.assignment.id,
+                                       name: this.state.name,
+                                       earned: num,
+                                       weight: this.state.weightValue
+                                   });
                                }
                            }}
                     />
@@ -66,17 +79,25 @@ export class AssignmentRow extends React.Component<props, state> {
                     <input type="text"
                            className="form-control"
                            value={this.state.weightString}
+                           ref={input => this.weightInput = input}
                            onChange={event => {
                                let val = event.target.value;
                                this.setState({weightString: val});
-                               let num = zeroIfNotFinite(val);
-                               if (num == 0) { // invalid value
-                                   this.setState({weightString: '0'});
-                               }
-                               if (num  !== this.state.weightValue) {
-                                   this.setState({weightValue: num});
+                           }}
+                           onBlur={event => {
+                               let val = (event as any).target.value;
+                               let num = evalMathExpression(val);
+                               this.setState({weightString: val});
+
+                               if (isFinite(num) && num !== this.state.weightValue && document.activeElement !== this.weightInput) {
+                                   this.setState({weightValue: num, weightString: String(num)});
                                    this.props.onChange(this.props.assignment);
-                                   this.props.onChange({id: this.props.assignment.id, name: this.state.name, earned: this.state.earnedValue, weight: num});
+                                   this.props.onChange({
+                                       id: this.props.assignment.id,
+                                       name: this.state.name,
+                                       earned: this.state.earnedValue,
+                                       weight: num
+                                   });
                                }
                            }}
                     />

@@ -1,5 +1,6 @@
 import React = require('react');
 import {Assignment} from "../../model/assignment";
+import {evalMathExpression} from "../util";
 
 export interface props {
     onAdd: (assignment: Assignment) => void;
@@ -29,13 +30,18 @@ export class AssignmentFooter extends React.Component<props> {
             if ((document.activeElement !== this.nameInput && document.activeElement !== this.earnedInput &&
                     document.activeElement !== this.weightInput) || this.forceSave) {
 
-                if (this.nameInput.value || this.earnedInput.value)
+                if (this.nameInput.value || this.earnedInput.value) {
+                    let earnedVal = evalMathExpression(this.earnedInput.value);
+                    let weightVal = evalMathExpression(this.weightInput.value);
+
+                    console.log('weight val', weightVal);
                     this.props.onAdd({
                         id: this.createId(),
                         name: (this.nameInput.value ? this.nameInput.value : 'Untitled'),
-                        earned: (isFinite(+this.earnedInput.value) ? +this.earnedInput.value : 0),
-                        weight: (isFinite(+this.weightInput.value) ? +this.weightInput.value : 0)
+                        earned: (isFinite(earnedVal) ? earnedVal : 0),
+                        weight: (isFinite(weightVal) ? weightVal : 0)
                     });
+                }
 
                 this.nameInput.value = '';
                 this.earnedInput.value = '';
@@ -99,4 +105,6 @@ export class AssignmentFooter extends React.Component<props> {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
     }
+
+
 }
