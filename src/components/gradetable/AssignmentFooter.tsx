@@ -1,6 +1,6 @@
 import React = require('react');
 import {Assignment} from "../../model/assignment";
-import {evalMathExpression} from "../util";
+import {evalMathExpression} from "../../util";
 
 export interface props {
     onAdd: (assignment: Assignment) => void;
